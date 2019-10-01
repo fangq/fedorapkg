@@ -7,9 +7,9 @@ Summary:        ZMAT: A portable data compression/decompression toolbox for MATL
 License:        GPLv3+ or BSD
 URL:            https://github.com/fangq/zmat
 Source0:        https://github.com/fangq/zmat/archive/v%{version}/%{octpkg}-%{version}.tar.gz
-Source1:        https://github.com/fangq/easylzma/archive/0.0.7.tar.gz
+Source1:        https://github.com/lloyd/easylzma/archive/0.0.7.tar.gz
 BuildArch:      noarch
-#BuildRequires:  cmake, octave-devel
+BuildRequires:  cmake, octave-devel
 
 Requires:       octave
 Requires(post): octave
