@@ -50,7 +50,7 @@ Categories: Zip
 EOF
 
 cat > INDEX << EOF
-jsonlab >> ZMat
+zmat >> ZMat
 ZMat
  zmat
 EOF
