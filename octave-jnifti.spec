@@ -62,6 +62,9 @@ JNIfTI
  loadnifti
  memmapstream
  nifticreate
+ niftiread
+ niftiinfo
+ niftiwrite
  nii2jnii
  niicodemap
  niiformat
