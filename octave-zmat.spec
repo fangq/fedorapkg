@@ -1,14 +1,14 @@
 %global octpkg zmat
 
 Name:           octave-%{octpkg}
-Version:        0.8
+Version:        0.9
 Release:        1%{?dist}
 Summary:        ZMAT: A portable data compression/decompression toolbox for MATLAB/Octave
 License:        GPLv3+ or BSD
 URL:            https://github.com/fangq/zmat
 Source0:        https://github.com/fangq/zmat/archive/v%{version}/%{octpkg}-%{version}.tar.gz
-Source1:        https://github.com/lloyd/easylzma/archive/0.0.7.tar.gz
-BuildArch:      noarch
+Source1:        https://github.com/lloyd/easylzma/archive/0.0.7/easylzma-0.0.7.tar.gz
+BuildArch:      x86_64
 BuildRequires:  cmake, octave-devel
 
 Requires:       octave
@@ -24,7 +24,9 @@ compression/decompression; lzma is the slowest but has the highest compression
 ratio; zlib/gzip have the best balance between speed and compression time.
 
 %prep
-%autosetup -n %{octpkg}-%{version}
+%autosetup -n %{octpkg}-%{version} -b 1
+rm -rf src/easylzma
+cp -r ../easylzma-0.0.7 src/easylzma
 
 cp LICENSE.txt COPYING
 
@@ -36,11 +38,11 @@ Title: %{summary}
 Author: Qianqian Fang <fangqq@gmail.com>
 Maintainer: Qianqian Fang <fangqq@gmail.com>
 Description: ZMat is a portable mex function to enable zlib/gzip/lzma/lzip/lz4/lz4hc based data 
-compression/decompression and base64 encoding/decoding support in MATLAB and GNU Octave. 
-It is fast and compact, can process a large array within a fraction of a second.
-Among the 6 supported compression methods, lz4 is the fastest for 
-compression/decompression; lzma is the slowest but has the highest compression 
-ratio; zlib/gzip have the best balance between speed and compression time.
+ compression/decompression and base64 encoding/decoding support in MATLAB and GNU Octave. 
+ It is fast and compact, can process a large array within a fraction of a second.
+ Among the 6 supported compression methods, lz4 is the fastest for 
+ compression/decompression; lzma is the slowest but has the highest compression 
+ ratio; zlib/gzip have the best balance between speed and compression time.
 
 Categories: Zip
 EOF
@@ -51,16 +53,12 @@ ZMat
  zmat
 EOF
 
+
 mkdir -p inst/
 mv *.m inst/
 
 %build
-cd src/
-wget https://github.com/lloyd/easylzma/archive/0.0.7.tar.gz
-tar zxvf 0.0.7.tar.gz
-rm -rf easylzma
-mv easylzma-0.0.7 easylzma
-cd easylzma
+cd src/easylzma
 cmake .
 make
 mv easylzma-0.0.7 easylzma-0.0.8
@@ -69,6 +67,7 @@ make clean
 make oct
 cd ../
 mv *.mex inst/
+echo 'all:' > src/Makefile
 %octave_pkg_build
 
 %install
@@ -85,7 +84,10 @@ mv *.mex inst/
 
 %files
 %license LICENSE.txt
-%doc examples
+%doc example
+%doc README.rst
+%doc AUTHORS.txt
+%doc ChangeLog.txt
 %dir %{octpkgdir}
 %{octpkgdir}/*.m
 %{octpkgdir}/*.mex
@@ -93,5 +95,5 @@ mv *.mex inst/
 %{octpkgdir}/packinfo
 
 %changelog
-* Thu Oct 01 2019 Qianqian Fang <fangqq@gmail.com> - 0.8-1
+* Thu Oct 01 2019 Qianqian Fang <fangqq@gmail.com> - 0.9-1
 - Initial package
