@@ -4,9 +4,9 @@ Name:           octave-%{octpkg}
 Version:        0.5
 Release:        1%{?dist}
 Summary:        JNIfTI - Fast NIfTI-1/2 reader and NIfTI-to-JNIfTI converter for MATLAB/Octave
-License:        GPLv3+ or Apache2
+License:        GPLv3+ or ASL 2.0
 URL:            https://github.com/fangq/jnifti
-Source0:        https://github.com/fangq/jnifti/archive/%{octpkg}_%{version}.tar.gz
+Source0:        https://github.com/fangq/%{octpkg}/archive/v%{version}.tar.gz
 BuildArch:      noarch
 
 Requires:       octave
@@ -28,8 +28,8 @@ making the data much easier to manipulate and share.
 %prep
 %autosetup -n %{octpkg}-%{version}
 rm -rf *.md *.txt
-mv lib/matlab/* .
-mv lib/octave/* .
+cp lib/matlab/* .
+cp lib/octave/* .
 rm -rf lib
 rm -rf samples/headct
 
@@ -90,7 +90,7 @@ mv *.m inst/
 %octave_cmd pkg rebuild
 
 %files
-%license LICENSE_GPLv3.txt LICENSE_Apache-2.0.txt	
+%license LICENSE_GPLv3.txt LICENSE_Apache-2.0.txt
 %doc samples
 %doc README.md
 %dir %{octpkgdir}
