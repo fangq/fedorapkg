@@ -1,0 +1,121 @@
+%global octpkg mcxlab
+%global project mcxcl
+
+Name:           octave-%{octpkg}
+Version:        0.9.5
+Release:        1%{?dist}
+Summary:        MCXLAB - A GPU Monte Carlo 3-D photon transport simulator for MATLAB/Octave
+License:        GPLv3+
+URL:            https://mcx.space
+Source0:        https://github.com/fangq/%{project}/archive/v%{version}.tar.gz
+BuildArch:      i386 x86_64
+BuildRequires:  octave opencl-headers ocl-icd-devel
+
+Requires:       octave opencl-filesystem
+Requires(post): octave
+Requires(postun): octave
+
+%description
+Monte Carlo eXtreme OpenCL (MCX-CL) is a fast photon transport simulation 
+software for 3D heterogeneous turbid media, accelerated by GPUs.
+MCXLAB-CL is the native MEX version of MCX-CL for Matlab and GNU Octave. 
+It contains the entire MCX-CL code into a MEX function which can be called 
+directly inside Matlab or Octave. The input and output files in MCX are 
+replaced by convenient in-memory struct variables in MCXLAB-CL, thus, 
+making it much easier to use and interact. Matlab/Octave also provides 
+convenient plotting and data analysis functions. With MCXLAB-CL, your 
+analysis can be streamlined and speed-up without involving disk files.
+
+%prep
+%autosetup -n %{octpkg}-%{version}
+rm -rf .git_filters deploy setup example
+cp utils/*.m mcxlabcl
+
+cp LICENSE.txt COPYING
+
+cat > DESCRIPTION << EOF
+Name: %{octpkg}
+Version: %{version}
+Date: %(date +"%Y-%d-%m")
+Title: %{summary}
+Author: Qianqian Fang <fangqq@gmail.com>
+Maintainer: Qianqian Fang <fangqq@gmail.com>
+Description: Monte Carlo eXtreme OpenCL (MCX-CL) is a fast photon transport simulation 
+ software for 3D heterogeneous turbid media, accelerated by GPUs.
+ MCXLAB-CL is the native MEX version of MCX-CL for Matlab and GNU Octave. 
+ It contains the entire MCX-CL code into a MEX function which can be called 
+ directly inside Matlab or Octave. The input and output files in MCX are 
+ replaced by convenient in-memory struct variables in MCXLAB-CL, thus, 
+ making it much easier to use and interact. Matlab/Octave also provides 
+ convenient plotting and data analysis functions. With MCXLAB-CL, your 
+ analysis can be streamlined and speed-up without involving disk files.
+EOF
+
+cat > INDEX << EOF
+mcxlabcl >> MCXLABCL
+MCXLABCL
+ cwdiffusion
+ getdistance
+ hobbysplines
+ image3i
+ islicer
+ loadmc2
+ loadmch
+ json2mcx
+ mcx2json
+ mcxdcsg1
+ mcxdetphoton
+ mcxdettime
+ mcxdettpsf
+ mcxdetweight
+ mcxfluence2energy
+ mcxlabcl
+ mcxloadfile
+ mcxloadnii
+ mcxmeanpath
+ mcxmeanscat
+ mcxplotphotons
+ mcxplotvol
+ normalizemcx
+ serialcorr
+ slice3i
+ stacked_bar3
+ tddiffusion
+EOF
+
+%build
+cd src
+make oct
+cd ../
+rm README.txt
+mv mcxlabcl/README.txt .
+mv mcxlabcl/examples .
+mv mcxlabcl inst
+rm -rf src
+%octave_pkg_build
+
+%install
+%octave_pkg_install
+
+%post
+%octave_cmd pkg rebuild
+
+%preun
+%octave_pkg_preun
+
+%postun
+%octave_cmd pkg rebuild
+
+%files
+%license LICENSE.txt
+%doc examples
+%doc doc
+%doc README.txt AUTHORS.txt
+%dir %{octpkgdir}
+%{octpkgdir}/*.m
+%doc %{octpkgdir}/doc-cache
+%{octpkgdir}/packinfo
+
+%changelog
+* Wed Oct 02 2019 Qianqian Fang <fangqq@gmail.com> - 0.9.5-1
+- Initial package
