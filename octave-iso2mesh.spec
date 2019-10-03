@@ -1,17 +1,18 @@
 %global octpkg iso2mesh
 
 Name:           octave-%{octpkg}
-Version:        1.9.0
-Release:        1.1%{?dist}
+Version:        1.9.1
+Release:        1%{?dist}
 Summary:        Iso2Mesh - a 3D surface and volumetric mesh generator for MATLAB/Octave
 License:        GPLv3+
 URL:            https://github.com/fangq/iso2mesh
-Source0:        https://github.com/fangq/iso2mesh/archive/v%{version}/%{octpkg}-%{version}-1.tar.gz
+Source0:        https://github.com/fangq/iso2mesh/archive/v%{version}/%{octpkg}-%{version}.tar.gz
 Source1:        https://github.com/fangq/cork/archive/v0.9/cork-v0.9.tar.gz
 Source2:        https://github.com/fangq/meshfix/archive/v1.2.1/meshfix-v1.2.1.tar.gz
 Source3:        http://ftp.mcs.anl.gov/pub/petsc/externalpackages/tetgen1.5.1.tar.gz
+Source4:        http://ftp.mcs.anl.gov/pub/petsc/externalpackages/tetgen1.4.3.tar.gz
 ExclusiveArch:  x86_64
-BuildRequires:  cmake, CGAL-devel, SuperLU, SuperLU-devel, blas-static, tetgen
+BuildRequires:  cmake, CGAL-devel, SuperLU, SuperLU-devel, blas-static
 
 Requires:       octave
 Requires(post): octave
@@ -35,7 +36,21 @@ cross-platform and is compatible with both MATLAB and GNU Octave
 (a free MATLAB clone).
 
 %prep
-%autosetup -n %{octpkg}-%{version} -b 1 -b 2 -b 3
+%autosetup -b 1 -n %{octpkg}-%{version}
+%autosetup -b 2 -n %{octpkg}-%{version}
+%autosetup -b 3 -n %{octpkg}-%{version}
+%autosetup -b 4 -n %{octpkg}-%{version}
+rm -rf tools/cork
+rm -rf tools/meshfix
+rm -rf tools/tetgen
+mv ../cork-0.9 tools/cork
+mv ../meshfix-1.2.1 tools/meshfix
+mv ../tetgen1.5.1 tools/tetgen
+rm -rf bin/*.mex* bin/*.exe bin/*.dll
+cd ../tetgen1.4.3
+make
+cd ../%{octpkg}-%{version}
+mv ../tetgen1.4.3/tetgen bin
 
 cp COPYING.txt COPYING
 
@@ -66,20 +81,203 @@ Categories: Mesh
 EOF
 
 cat > INDEX << EOF
-zmat >> ZMat
-ZMat
- zmat
+iso2mesh >> Iso2Mesh
+Iso2Mesh
+ advancefront
+ barydualmesh
+ base64decode
+ base64encode
+ bbxflatsegment
+ binsurface
+ bwislands
+ cgals2m
+ cgalv2m
+ deislands2d
+ deislands3d
+ delendelem
+ deletemeshfile
+ edgeneighbors
+ elemfacecenter
+ elemvolume
+ extractloops
+ extrudecurve
+ extrudesurf
+ faceneighbors
+ fallbackexeext
+ fast_match_bracket
+ fillholes3d
+ fillsurf
+ finddisconnsurf
+ flatsegment
+ getexeext
+ getintersecttri
+ getoptkey
+ getplanefrom3pt
+ getvarfrom
+ gzipdecode
+ gzipencode
+ highordertet
+ i2m
+ imedge3d
+ img2mesh
+ innersurf
+ insurface
+ internalpoint
+ iso2meshver
+ isoctavemesh
+ jdatadecode
+ jdataencode
+ jnifticreate
+ jsonopt
+ latticegrid
+ loadjnifti
+ loadjson
+ loadmsgpack
+ loadnifti
+ loadubjson
+ lz4decode
+ lz4encode
+ lz4hcdecode
+ lz4hcencode
+ lzipdecode
+ lzipencode
+ lzmadecode
+ lzmaencode
+ m2v
+ maskdist
+ match_bracket
+ maxsurf
+ mcpath
+ memmapstream
+ mergemesh
+ mergestruct
+ mergesurf
+ mesh2mask
+ mesh2vol
+ meshabox
+ meshacylinder
+ meshanellip
+ meshasphere
+ meshcentroid
+ meshcheckrepair
+ meshconn
+ meshcylinders
+ meshedge
+ mesheuler
+ meshface
+ meshgrid5
+ meshgrid6
+ meshinterp
+ meshquality
+ meshrefine
+ meshremap
+ meshreorient
+ meshresample
+ meshunitsphere
+ mwpath
+ neighborelem
+ nestbracket2dim
+ nifticreate
+ nii2jnii
+ niicodemap
+ niiformat
+ nodevolume
+ orderloopedge
+ orthdisk
+ outersurf
+ plotedges
+ plotmesh
+ plotsurf
+ plottetra
+ qmeshcut
+ raysurf
+ raytrace
+ readasc
+ readgts
+ readinr
+ readmedit
+ readmptiff
+ readnifti
+ readnirfast
+ readoff
+ readsmf
+ readtetgen
+ remeshsurf
+ removedupelem
+ removedupnodes
+ removeisolatednode
+ removeisolatedsurf
+ rotatevec3d
+ rotmat2vec
+ s2m
+ s2v
+ saveabaqus
+ saveasc
+ savebinstl
+ savebnii
+ savedxf
+ savegts
+ saveinr
+ savejmesh
+ savejnifti
+ savejnii
+ savejson
+ savemedit
+ savemphtxt
+ savemsgpack
+ savemsh
+ savenifti
+ savenirfast
+ saveoff
+ savesmf
+ savestl
+ savesurfpoly
+ savetetgenele
+ savetetgennode
+ saveubjson
+ savevrml
+ smoothbinvol
+ smoothsurf
+ sms
+ sortmesh
+ surf2mesh
+ surf2vol
+ surf2volz
+ surfaceclean
+ surfacenorm
+ surfboolean
+ surfdiffuse
+ surfedge
+ surfinterior
+ surfpart
+ surfplane
+ surfreorient
+ surfseeds
+ surfvolume
+ thickenbinvol
+ thinbinvol
+ uniqedges
+ uniqfaces
+ v2m
+ v2s
+ varargin2struct
+ vol2mesh
+ vol2restrictedtri
+ vol2surf
+ volface
+ volmap2mesh
+ zlibdecode
+ zlibencode
 EOF
-
 
 mkdir -p inst/
 mv *.m inst/
-mv *.fig inst/
+mv img2mesh.fig inst/
 
 %build
 cd tools
-make clean
 make
+cd ../
 mv bin inst
 %octave_pkg_build
 
@@ -96,9 +294,10 @@ mv bin inst
 %octave_cmd pkg rebuild
 
 %files
-%license LICENSE.txt
+%license COPYING.txt
 %doc sample
 %doc README.txt
+%doc Content.txt
 %doc AUTHORS.txt
 %doc ChangeLog.txt
 %dir %{octpkgdir}
@@ -108,5 +307,5 @@ mv bin inst
 %{octpkgdir}/packinfo
 
 %changelog
-* Tue Oct 01 2019 Qianqian Fang <fangqq@gmail.com> - 1.9.0-1.1
+* Wed Oct 02 2019 Qianqian Fang <fangqq@gmail.com> - 1.9.1-1
 - Initial package
