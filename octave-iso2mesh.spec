@@ -5,7 +5,7 @@ Version:        1.9.1
 Release:        1%{?dist}
 Summary:        Iso2Mesh - a 3D surface and volumetric mesh generator for MATLAB/Octave
 License:        GPLv3+
-URL:            https://github.com/fangq/iso2mesh
+URL:            http://iso2mesh.sf.net
 Source0:        https://github.com/fangq/iso2mesh/archive/v%{version}/%{octpkg}-%{version}.tar.gz
 Source1:        https://github.com/fangq/cork/archive/v0.9/cork-v0.9.tar.gz
 Source2:        https://github.com/fangq/meshfix/archive/v1.2.1/meshfix-v1.2.1.tar.gz
