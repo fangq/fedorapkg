@@ -31,7 +31,6 @@ rm -rf *.md *.txt
 cp lib/matlab/* .
 cp lib/octave/* .
 rm -rf lib
-rm -rf samples/headct
 
 cp LICENSE_GPLv3.txt COPYING
 
