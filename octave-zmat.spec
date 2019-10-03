@@ -8,7 +8,7 @@ License:        GPLv3+ or BSD
 URL:            https://github.com/fangq/zmat
 Source0:        https://github.com/fangq/zmat/archive/v%{version}/%{octpkg}-%{version}.tar.gz
 Source1:        https://github.com/lloyd/easylzma/archive/0.0.7/easylzma-0.0.7.tar.gz
-ExclusiveArch:  x86_64
+BuildArch:      i386, x86_64
 BuildRequires:  cmake, octave-devel
 
 Requires:       octave
