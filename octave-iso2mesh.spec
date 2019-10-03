@@ -1,4 +1,5 @@
 %global octpkg iso2mesh
+%global _binaries_in_noarch_packages_terminate_build   0
 
 Name:           octave-%{octpkg}
 Version:        1.9.1
@@ -11,7 +12,8 @@ Source1:        https://github.com/fangq/cork/archive/v0.9/cork-v0.9.tar.gz
 Source2:        https://github.com/fangq/meshfix/archive/v1.2.1/meshfix-v1.2.1.tar.gz
 Source3:        http://ftp.mcs.anl.gov/pub/petsc/externalpackages/tetgen1.5.1.tar.gz
 Source4:        http://ftp.mcs.anl.gov/pub/petsc/externalpackages/tetgen1.4.3.tar.gz
-BuildArch:      i386, x86_64
+BuildArch:      noarch
+ExclusiveArch:  %{ix86} x86_64
 BuildRequires:  cmake, CGAL-devel, SuperLU, SuperLU-devel, blas-static
 
 Requires:       octave
@@ -301,6 +303,8 @@ mv bin inst
 %doc AUTHORS.txt
 %doc ChangeLog.txt
 %dir %{octpkgdir}
+%{octpkgdir}/doc/*
+%{octpkgdir}/bin/*
 %{octpkgdir}/*.m
 %{octpkgdir}/*.fig
 %doc %{octpkgdir}/doc-cache
