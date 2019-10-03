@@ -11,7 +11,7 @@ Source1:        https://github.com/fangq/cork/archive/v0.9/cork-v0.9.tar.gz
 Source2:        https://github.com/fangq/meshfix/archive/v1.2.1/meshfix-v1.2.1.tar.gz
 Source3:        http://ftp.mcs.anl.gov/pub/petsc/externalpackages/tetgen1.5.1.tar.gz
 Source4:        http://ftp.mcs.anl.gov/pub/petsc/externalpackages/tetgen1.4.3.tar.gz
-ExclusiveArch:  x86_64
+BuildArch:      i386, x86_64
 BuildRequires:  cmake, CGAL-devel, SuperLU, SuperLU-devel, blas-static
 
 Requires:       octave
