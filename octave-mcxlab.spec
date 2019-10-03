@@ -1,5 +1,6 @@
 %global octpkg mcxlab
 %global project mcxcl
+%global _binaries_in_noarch_packages_terminate_build   0
 
 Name:           octave-%{octpkg}
 Version:        0.9.5
@@ -7,8 +8,9 @@ Release:        1%{?dist}
 Summary:        MCXLAB - A GPU Monte Carlo 3-D photon transport simulator for MATLAB/Octave
 License:        GPLv3+
 URL:            https://mcx.space
-Source0:        https://github.com/fangq/%{project}/archive/v%{version}.tar.gz
-BuildArch:      i386 x86_64
+Source0:        https://github.com/fangq/%{project}/archive/%{project}-%{version}.tar.gz
+BuildArch:      noarch
+ExclusiveArch:  %{ix86} x86_64
 BuildRequires:  octave opencl-headers ocl-icd-devel
 
 Requires:       octave opencl-filesystem
@@ -27,7 +29,7 @@ convenient plotting and data analysis functions. With MCXLAB-CL, your
 analysis can be streamlined and speed-up without involving disk files.
 
 %prep
-%autosetup -n %{octpkg}-%{version}
+%autosetup -n %{project}-%{version}
 rm -rf .git_filters deploy setup example
 cp utils/*.m mcxlabcl
 
@@ -85,13 +87,15 @@ EOF
 
 %build
 cd src
-make oct
+make oct LIBOPENCLDIR=`octave-config -p OCTLIBDIR`
 cd ../
 rm README.txt
 mv mcxlabcl/README.txt .
+rm mcxlabcl/*.txt
 mv mcxlabcl/examples .
 mv mcxlabcl inst
 rm -rf src
+rm -rf doc
 %octave_pkg_build
 
 %install
@@ -108,11 +112,10 @@ rm -rf src
 
 %files
 %license LICENSE.txt
-%doc examples
-%doc doc
-%doc README.txt AUTHORS.txt
+%doc examples README.txt AUTHORS.txt
 %dir %{octpkgdir}
 %{octpkgdir}/*.m
+%{octpkgdir}/*.mex
 %doc %{octpkgdir}/doc-cache
 %{octpkgdir}/packinfo
 
