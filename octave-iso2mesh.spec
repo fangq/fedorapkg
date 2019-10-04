@@ -1,5 +1,6 @@
 %global octpkg iso2mesh
 %global _binaries_in_noarch_packages_terminate_build   0
+%global debug_package %{nil}
 
 Name:           octave-%{octpkg}
 Version:        1.9.1
@@ -11,7 +12,6 @@ Source0:        https://github.com/fangq/iso2mesh/archive/v%{version}/%{octpkg}-
 Source1:        https://github.com/fangq/cork/archive/v0.9/cork-v0.9.tar.gz
 Source2:        https://github.com/fangq/meshfix/archive/v1.2.1/meshfix-v1.2.1.tar.gz
 Source3:        http://ftp.mcs.anl.gov/pub/petsc/externalpackages/tetgen1.5.1.tar.gz
-Source4:        http://ftp.mcs.anl.gov/pub/petsc/externalpackages/tetgen1.4.3.tar.gz
 BuildArch:      noarch
 ExclusiveArch:  %{ix86} x86_64
 BuildRequires:  cmake, CGAL-devel, SuperLU, SuperLU-devel, blas-static
@@ -41,7 +41,6 @@ cross-platform and is compatible with both MATLAB and GNU Octave
 %autosetup -b 1 -n %{octpkg}-%{version}
 %autosetup -b 2 -n %{octpkg}-%{version}
 %autosetup -b 3 -n %{octpkg}-%{version}
-%autosetup -b 4 -n %{octpkg}-%{version}
 rm -rf tools/cork
 rm -rf tools/meshfix
 rm -rf tools/tetgen
@@ -49,10 +48,6 @@ mv ../cork-0.9 tools/cork
 mv ../meshfix-1.2.1 tools/meshfix
 mv ../tetgen1.5.1 tools/tetgen
 rm -rf bin/*.mex* bin/*.exe bin/*.dll
-cd ../tetgen1.4.3
-make
-cd ../%{octpkg}-%{version}
-mv ../tetgen1.4.3/tetgen bin
 
 cp COPYING.txt COPYING
 
@@ -279,6 +274,8 @@ mv img2mesh.fig inst/
 %build
 cd tools
 make
+cd ../bin
+ln -s tetgen1.5 tetgen
 cd ../
 mv bin inst
 %octave_pkg_build
