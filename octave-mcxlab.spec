@@ -1,14 +1,15 @@
 %global octpkg mcxlab
 %global project mcxcl
 %global _binaries_in_noarch_packages_terminate_build   0
+%global debug_package %{nil}
 
 Name:           octave-%{octpkg}
 Version:        0.9.5
 Release:        1%{?dist}
 Summary:        MCXLAB - A GPU Monte Carlo 3-D photon transport simulator for MATLAB/Octave
 License:        GPLv3+
-URL:            https://mcx.space
-Source0:        https://github.com/fangq/%{project}/archive/%{project}-%{version}.tar.gz
+URL:            http://mcx.space
+Source0:        https://github.com/fangq/%{project}/archive/v%{version}/%{project}-%{version}.tar.gz
 BuildArch:      noarch
 ExclusiveArch:  %{ix86} x86_64
 BuildRequires:  octave opencl-headers ocl-icd-devel
