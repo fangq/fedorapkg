@@ -48,6 +48,8 @@ Description: Monte Carlo eXtreme OpenCL (MCX-CL) is a fast photon transport simu
  analysis can be streamlined and speed-up without involving disk files.
 EOF
 
+cp LICENSE.txt COPYING
+
 cat > INDEX << EOF
 mcxlabcl >> MCXLABCL
 MCXLABCL
@@ -92,6 +94,10 @@ mv mcxlabcl inst
 rm -rf src
 rm -rf doc
 %octave_pkg_build
+
+%if 0%{?fedora} <=30
+   %global octave_tar_suffix any-none
+%endif
 
 %install
 %octave_pkg_install
