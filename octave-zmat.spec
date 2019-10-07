@@ -7,7 +7,7 @@ Summary:        A portable data compression/decompression toolbox for MATLAB/Oct
 License:        GPLv3+ or BSD
 URL:            https://github.com/fangq/zmat
 Source0:        https://github.com/fangq/zmat/archive/v%{version}/%{octpkg}-%{version}.tar.gz
-Source1:        https://github.com/lloyd/easylzma/archive/v0.0.7/easylzma-0.0.7.tar.gz
+Source1:        https://github.com/lloyd/easylzma/archive/0.0.7/easylzma-0.0.7.tar.gz
 BuildRequires:  octave-devel zlib cmake gcc-c++
 
 Requires:       octave zlib
@@ -62,7 +62,7 @@ mv *.m inst/
 %build
 cd src/easylzma
 cmake .
-make
+%make_build
 mv easylzma-0.0.7 easylzma-0.0.8
 cd ../
 make clean 
