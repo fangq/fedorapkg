@@ -61,7 +61,7 @@ mv *.m inst/
 
 %build
 cd src/easylzma
-cmake .
+%cmake .
 %make_build
 mv easylzma-0.0.7 easylzma-0.0.8
 cd ../
