@@ -15,7 +15,7 @@ Source3:        http://ftp.mcs.anl.gov/pub/petsc/externalpackages/tetgen1.5.1.ta
 
 BuildRequires:  cmake CGAL-devel SuperLU-devel blas-static gcc-g++ zlib-devel octave-devel
 
-Requires:       octave CGAL SuperLU gmp-c++
+Requires:       octave CGAL SuperLU gmp-devel
 Requires(post): octave
 Requires(postun): octave
 
