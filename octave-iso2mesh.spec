@@ -1,6 +1,4 @@
 %global octpkg iso2mesh
-%global _binaries_in_noarch_packages_terminate_build   0
-%global debug_package %{nil}
 
 Name:           octave-%{octpkg}
 Version:        1.9.1
@@ -9,14 +7,13 @@ Summary:        Iso2Mesh - a 3D surface and volumetric mesh generator for MATLAB
 License:        GPLv3+
 URL:            http://iso2mesh.sf.net
 Source0:        https://github.com/fangq/iso2mesh/archive/v%{version}/%{octpkg}-%{version}.tar.gz
-Source1:        https://github.com/fangq/cork/archive/v0.9/cork-v0.9.tar.gz
-Source2:        https://github.com/fangq/meshfix/archive/v1.2.1/meshfix-v1.2.1.tar.gz
+Source1:        https://github.com/fangq/cork/archive/v0.9/cork-0.9.tar.gz
+Source2:        https://github.com/fangq/meshfix/archive/v1.2.1/meshfix-1.2.1.tar.gz
 Source3:        http://ftp.mcs.anl.gov/pub/petsc/externalpackages/tetgen1.5.1.tar.gz
-BuildArch:      noarch
-ExclusiveArch:  %{ix86} x86_64
-BuildRequires:  cmake, CGAL-devel, SuperLU, SuperLU-devel, blas-static
 
-Requires:       octave
+BuildRequires:  cmake CGAL-devel SuperLU-devel blas-static gcc-g++ zlib-devel octave-devel
+
+Requires:       octave CGAL SuperLU
 Requires(post): octave
 Requires(postun): octave
 
@@ -272,6 +269,7 @@ mv *.m inst/
 mv img2mesh.fig inst/
 
 %build
+%set_build_flags
 cd tools
 make
 cd ../bin
