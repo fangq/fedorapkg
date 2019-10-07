@@ -3,9 +3,11 @@
 Name:           octave-%{octpkg}
 Version:        1.9.1
 Release:        1%{?dist}
-Summary:        Iso2Mesh - a 3D surface and volumetric mesh generator for MATLAB/Octave
+Summary:        A 3D surface and volumetric mesh generator for MATLAB/Octave
 License:        GPLv3+
 URL:            http://iso2mesh.sf.net
+# the following utilities are called internally by iso2mesh (stored under a private folder),
+# this is needed for making outputs reproducible
 Source0:        https://github.com/fangq/iso2mesh/archive/v%{version}/%{octpkg}-%{version}.tar.gz
 Source1:        https://github.com/fangq/cork/archive/v0.9/cork-0.9.tar.gz
 Source2:        https://github.com/fangq/meshfix/archive/v1.2.1/meshfix-1.2.1.tar.gz
@@ -13,7 +15,7 @@ Source3:        http://ftp.mcs.anl.gov/pub/petsc/externalpackages/tetgen1.5.1.ta
 
 BuildRequires:  cmake CGAL-devel SuperLU-devel blas-static gcc-g++ zlib-devel octave-devel
 
-Requires:       octave CGAL SuperLU
+Requires:       octave CGAL SuperLU gmp-c++
 Requires(post): octave
 Requires(postun): octave
 
@@ -277,6 +279,10 @@ ln -s tetgen1.5 tetgen
 cd ../
 mv bin inst
 %octave_pkg_build
+
+%if 0%{?fedora} <=30
+   %global octave_tar_suffix any-none
+%endif
 
 %install
 %octave_pkg_install
