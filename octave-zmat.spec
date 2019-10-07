@@ -3,15 +3,14 @@
 Name:           octave-%{octpkg}
 Version:        0.9
 Release:        1%{?dist}
-Summary:        ZMAT: A portable data compression/decompression toolbox for MATLAB/Octave
+Summary:        A portable data compression/decompression toolbox for MATLAB/Octave
 License:        GPLv3+ or BSD
 URL:            https://github.com/fangq/zmat
 Source0:        https://github.com/fangq/zmat/archive/v%{version}/%{octpkg}-%{version}.tar.gz
-Source1:        https://github.com/lloyd/easylzma/archive/0.0.7/easylzma-0.0.7.tar.gz
-BuildArch:      i386, x86_64
-BuildRequires:  cmake, octave-devel
+Source1:        https://github.com/lloyd/easylzma/archive/v0.0.7/easylzma-0.0.7.tar.gz
+BuildRequires:  octave-devel zlib cmake gcc-c++
 
-Requires:       octave
+Requires:       octave zlib
 Requires(post): octave
 Requires(postun): octave
 
@@ -53,6 +52,7 @@ cat > INDEX << EOF
 zmat >> ZMat
 ZMat
  zmat
+ zipmat
 EOF
 
 
@@ -69,8 +69,12 @@ make clean
 make oct
 cd ../
 mv *.mex inst/
-echo 'all:' > src/Makefile
+rm -rf src
 %octave_pkg_build
+
+%if 0%{?fedora} <=30
+   %global octave_tar_suffix any-none
+%endif
 
 %install
 %octave_pkg_install
