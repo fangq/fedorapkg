@@ -14,13 +14,13 @@ Source2:        https://github.com/fangq/meshfix/archive/v1.2.1/meshfix-1.2.1.ta
 Source3:        http://ftp.mcs.anl.gov/pub/petsc/externalpackages/tetgen1.5.1.tar.gz
 Patch0:         meshfix-remove-rpath.patch
 
-BuildArch:      i686 x86_64 aarch64 ppc64le s390x
+ExcludeArch:    armv7hl
 BuildRequires:  cmake CGAL-devel SuperLU-devel blas-static gcc-g++ zlib-devel octave-devel
 
 %if 0%{?fedora} >=32
-   Requires:       octave mpfr-devel gmp-devel boost-devel SuperLU
-#else
-   Requires:       octave CGAL SuperLU gmp-devel
+Requires:       octave mpfr-devel gmp-devel boost-devel SuperLU
+%else
+Requires:       octave CGAL SuperLU gmp-devel
 %endif
 
 Requires(post): octave
@@ -42,6 +42,7 @@ and GNU Octave.
 
 %package -n %{octpkg}-demos
 Summary:        Example datasets and scripts for the Iso2Mesh toolbox
+BuildArch:      noarch
 Requires:       octave octave-%{octpkg}
 Recommends:     %{octpkg}-demos
 
@@ -49,7 +50,7 @@ Recommends:     %{octpkg}-demos
 This package contains the demo script and sample datasets for octave-%{octpkg}. 
 
 %prep
-%setup -b 1 -n %{octpkg}-%{version}
+%setup -q -b 1 -n %{octpkg}-%{version}
 %setup -q -T -D -b 2 -n meshfix-1.2.1
 %patch0 -p1
 %setup -q -T -D -b 3 -n %{octpkg}-%{version}
