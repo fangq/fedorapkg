@@ -29,7 +29,7 @@ making the data much easier to manipulate and share.
 
 %package -n %{octpkg}-demos
 Summary:        Example datasets and scripts for the JNIfTI toolbox
-Requires:       octave octave-jnifti
+Requires:       octave octave-%{octpkg}
 
 %description -n %{octpkg}-demos
 This package contains the demo script and sample datasets for octave-%{octpkg}. 
