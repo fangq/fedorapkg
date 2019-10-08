@@ -12,10 +12,17 @@ Source0:        https://github.com/fangq/iso2mesh/archive/v%{version}/%{octpkg}-
 Source1:        https://github.com/fangq/cork/archive/v0.9/cork-0.9.tar.gz
 Source2:        https://github.com/fangq/meshfix/archive/v1.2.1/meshfix-1.2.1.tar.gz
 Source3:        http://ftp.mcs.anl.gov/pub/petsc/externalpackages/tetgen1.5.1.tar.gz
+Patch0:         meshfix-remove-rpath.patch
 
+BuildArch:      i686 x86_64 aarch64 ppc64le s390x
 BuildRequires:  cmake CGAL-devel SuperLU-devel blas-static gcc-g++ zlib-devel octave-devel
 
-Requires:       octave CGAL SuperLU gmp-devel
+%if 0%{?fedora} >=32
+   Requires:       octave mpfr-devel gmp-devel boost-devel SuperLU
+#else
+   Requires:       octave CGAL SuperLU gmp-devel
+%endif
+
 Requires(post): octave
 Requires(postun): octave
 
@@ -37,9 +44,10 @@ cross-platform and is compatible with both MATLAB and GNU Octave
 (a free MATLAB clone).
 
 %prep
-%autosetup -b 1 -n %{octpkg}-%{version}
-%autosetup -b 2 -n %{octpkg}-%{version}
-%autosetup -b 3 -n %{octpkg}-%{version}
+%setup -b 1 -n %{octpkg}-%{version}
+%setup -q -T -D -b 2 -n meshfix-1.2.1
+%patch0 -p1
+%setup -q -T -D -b 3 -n %{octpkg}-%{version}
 rm -rf tools/cork
 rm -rf tools/meshfix
 rm -rf tools/tetgen
@@ -273,7 +281,7 @@ mv img2mesh.fig inst/
 %build
 %set_build_flags
 cd tools
-make
+%make_build
 cd ../bin
 ln -s tetgen1.5 tetgen
 cd ../
@@ -298,12 +306,13 @@ mv bin inst
 
 %files
 %license COPYING.txt
-%doc sample
 %doc README.txt
 %doc Content.txt
 %doc AUTHORS.txt
 %doc ChangeLog.txt
 %dir %{octpkgdir}
+%dir %{octpkgdir}/doc
+%dir %{octpkgdir}/bin
 %{octpkgdir}/doc/*
 %{octpkgdir}/bin/*
 %{octpkgdir}/*.m

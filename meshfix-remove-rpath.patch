@@ -1,0 +1,14 @@
+diff -up a/CMakeLists.txt.orig b/CMakeLists.txt
+--- a/CMakeLists.txt.orig	2019-10-01 18:39:42.000000000 +0200
++++ b/CMakeLists.txt	2019-10-07 20:06:44.072901788 +0200
+@@ -8,10 +8,6 @@ include_directories(
+     contrib/OpenNL3.2.1/src
+     contrib/jrs_predicates
+ )
+-link_directories(
+-    ${LINK_DIRECTORIES}
+-    ${CMAKE_CURRENT_SOURCE_DIR}/contrib/JMeshLib/lib
+-)
+ file(GLOB meshfix_h include/*.h)
+ set(meshfix_src
+     contrib/jrs_predicates/jrs_predicates.c
