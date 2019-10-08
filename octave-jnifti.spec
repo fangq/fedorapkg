@@ -16,7 +16,7 @@ Requires(postun): octave
 Recommends:     octave-jsonlab
 
 %description
-This is a fully functional NIfTI-1/2 reader/writer that supports both
+JNIfTI Toolbox is a fully functional NIfTI-1/2 reader/writer that supports both
 MATLAB and GNU Octave, and is capable of reading/writing both non-compressed
 and compressed NIfTI files (.nii, .nii.gz) as well as two-part Analyze7.5/NIfTI
 files (.hdr/.img and .hdr.gz/.img.gz).  More importantly, this is a toolbox 
@@ -29,6 +29,7 @@ making the data much easier to manipulate and share.
 
 %package -n %{octpkg}-demos
 Summary:        Example datasets and scripts for the JNIfTI toolbox
+BuildArch:      noarch
 Requires:       octave octave-%{octpkg}
 
 %description -n %{octpkg}-demos
@@ -50,7 +51,7 @@ Date: %(date +"%Y-%d-%m")
 Title: %{summary}
 Author: Qianqian Fang <fangqq@gmail.com>
 Maintainer: Qianqian Fang <fangqq@gmail.com>
-Description: This is a fully functional NIfTI-1/2 reader/writer that supports both
+Description: JNIfTI Toolbox is a fully functional NIfTI-1/2 reader/writer that supports both
  MATLAB and GNU Octave, and is capable of reading/writing both non-compressed
  and compressed NIfTI files (.nii, .nii.gz) as well as two-part Analyze7.5/NIfTI
  files (.hdr/.img and .hdr.gz/.img.gz). 
