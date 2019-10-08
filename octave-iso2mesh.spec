@@ -37,11 +37,16 @@ a 3D image stack, including binary, segmented or gray-scale
 images such as MRI or CT scans, into quality volumetric 
 meshes. This makes it particularly suitable for multi-modality 
 medical imaging data analysis and multi-physics modeling.
-Above all, iso2mesh is open-source. You can download it for 
-free. You are also allowed to extend the toolbox for your
-own research and share with other users. Iso2Mesh is 
-cross-platform and is compatible with both MATLAB and GNU Octave 
-(a free MATLAB clone).
+Iso2Mesh is cross-platform and is compatible with both MATLAB 
+and GNU Octave.
+
+%package -n %{octpkg}-demos
+Summary:        Example datasets and scripts for the Iso2Mesh toolbox
+Requires:       octave octave-%{octpkg}
+Recommends:     %{octpkg}-demos
+
+%description -n %{octpkg}-demos
+This package contains the demo script and sample datasets for octave-%{octpkg}. 
 
 %prep
 %setup -b 1 -n %{octpkg}-%{version}
@@ -75,11 +80,8 @@ Description: Iso2Mesh is a MATLAB/Octave-based mesh generation toolbox,
  images such as MRI or CT scans, into quality volumetric 
  meshes. This makes it particularly suitable for multi-modality 
  medical imaging data analysis and multi-physics modeling.
- Above all, iso2mesh is open-source. You can download it for 
- free. You are also allowed to extend the toolbox for your
- own research and share with other users. Iso2Mesh is 
- cross-platform and is compatible with both MATLAB and GNU Octave 
- (a free MATLAB clone).
+ Iso2Mesh is cross-platform and is compatible with both MATLAB 
+ and GNU Octave.
 
 Categories: Mesh
 EOF
@@ -319,6 +321,10 @@ mv bin inst
 %{octpkgdir}/*.fig
 %doc %{octpkgdir}/doc-cache
 %{octpkgdir}/packinfo
+
+%files -n %{octpkg}-demos
+%license COPYING.txt
+%doc sample
 
 %changelog
 * Wed Oct 02 2019 Qianqian Fang <fangqq@gmail.com> - 1.9.1-1
