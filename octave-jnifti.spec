@@ -26,6 +26,14 @@ text-based and .bnii for binary-based), defined by the JNIfTI specification
 and extensible file format compared to the more rigid and opaque NIfTI format, 
 making the data much easier to manipulate and share.
 
+
+%package -n %{octpkg}-demos
+Summary:        Example datasets and scripts for the JNIfTI toolbox
+Requires:       octave octave-jnifti
+
+%description -n %{octpkg}-demos
+This package contains the demo script and sample datasets for octave-%{octpkg}. 
+
 %prep
 %autosetup -n %{octpkg}-%{version}
 rm -rf *.md *.txt
@@ -94,12 +102,15 @@ mv *.m inst/
 
 %files
 %license LICENSE_GPLv3.txt LICENSE_Apache-2.0.txt
-%doc samples
 %doc README.md
 %dir %{octpkgdir}
 %{octpkgdir}/*.m
 %doc %{octpkgdir}/doc-cache
 %{octpkgdir}/packinfo
+
+%files -n %{octpkg}-demos
+%license LICENSE_GPLv3.txt LICENSE_Apache-2.0.txt
+%doc samples
 
 %changelog
 * Wed Oct 02 2019 Qianqian Fang <fangqq@gmail.com> - 0.5-1
