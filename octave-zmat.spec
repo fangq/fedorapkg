@@ -1,12 +1,13 @@
 %global octpkg zmat
+%global libpkg zipmat
 
 Name:           octave-%{octpkg}
-Version:        0.9
+Version:        0.9.1
 Release:        1%{?dist}
 Summary:        A portable data compression/decompression toolbox for MATLAB/Octave
 License:        GPLv3+ or BSD
-URL:            https://github.com/fangq/zmat
-Source0:        https://github.com/fangq/zmat/archive/v%{version}/%{octpkg}-%{version}.tar.gz
+URL:            https://github.com/fangq/%{octpkg}
+Source0:        https://github.com/fangq/%{octpkg}/archive/v%{version}/%{octpkg}-%{version}.tar.gz
 Source1:        https://github.com/lloyd/easylzma/archive/0.0.7/easylzma-0.0.7.tar.gz
 BuildRequires:  octave-devel zlib cmake gcc-c++
 
@@ -22,6 +23,16 @@ array within a fraction of a second. Among the 6 supported compression
 methods, lz4 is the fastest for compression/decompression; lzma is the 
 slowest but has the highest compression ratio; zlib/gzip have the best 
 balance between speed and compression time.
+
+
+%package devel
+Summary:        An eazy-to-use data compression library
+Provides:       %{octpkg}-static = %{version}-%{release}
+Requires:       zlib
+
+%description devel
+The %{name}-devel package provides the headers files and tools you may need to 
+develop applications using zmat.
 
 %prep
 %autosetup -n %{octpkg}-%{version} -b 1
@@ -60,13 +71,21 @@ mkdir -p inst/
 mv *.m inst/
 
 %build
+mkdir lib
+mkdir include
 cd src/easylzma
 %cmake .
 %make_build
 mv easylzma-0.0.7 easylzma-0.0.8
 cd ../
-make clean 
-make oct
+%make_build clean
+%make_build lib BINARY=lib%{octpkg}.a
+cp ../lib%{octpkg}.a ../lib
+cp zmatlib.h ../include
+%make_build clean
+%make_build dll BINARY=lib%{octpkg}.so
+mv ../lib%{octpkg}.so ../lib
+%make_build oct
 cd ../
 mv *.mex inst/
 rm -rf src
@@ -78,6 +97,13 @@ rm -rf src
 
 %install
 %octave_pkg_install
+
+install -m 755 -d $RPM_BUILD_ROOT/%{_includedir}/
+install -m 644 -t $RPM_BUILD_ROOT/%{_includedir}/ include/%{octpkg}lib.h
+
+install -m 755 -d $RPM_BUILD_ROOT/%{_libdir}/
+install -m 755 -t $RPM_BUILD_ROOT/%{_libdir}/ lib/lib%{octpkg}.so
+install -m 755 -t $RPM_BUILD_ROOT/%{_libdir}/ lib/lib%{octpkg}.a
 
 %post
 %octave_cmd pkg rebuild
@@ -100,6 +126,16 @@ rm -rf src
 %doc %{octpkgdir}/doc-cache
 %{octpkgdir}/packinfo
 
+
+%files devel
+%license LICENSE.txt
+%doc README.rst
+%doc AUTHORS.txt
+%{_includedir}/%{octpkg}lib.h
+%{_libdir}/%{libpkg}.so
+%{_libdir}/%{libpkg}.a
+
+
 %changelog
-* Tue Oct 01 2019 Qianqian Fang <fangqq@gmail.com> - 0.9-1
+* Tue Oct 01 2019 Qianqian Fang <fangqq@gmail.com> - 0.9.1-1
 - Initial package
