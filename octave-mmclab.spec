@@ -141,18 +141,21 @@ EOF
 
 %build
 cd src
-make oct LIBOPENCLDIR=`octave-config -p OCTLIBDIR`
-make clean
-make
+%make_build oct LFLAGS="-L`octave-config -p OCTLIBDIR` -lOpenCL"
 cd ../
-rm README.txt
-mv mmclab/README.txt .
 rm mmclab/*.txt
 mv mmclab/example .
 mv mmclab inst
-rm -rf src
-rm -rf commons
+mv src/Makefile .
 %octave_pkg_build
+
+mv Makefile src
+cd src
+%make_build clean
+%make_build
+mkdir -p ../bin
+cp bin/%{branch} ../bin/%{project}
+cd ../
 
 %if 0%{?fedora} <=30
    %global octave_tar_suffix any-none
@@ -160,6 +163,8 @@ rm -rf commons
 
 %install
 %octave_pkg_install
+install -m 755 -d $RPM_BUILD_ROOT/%{_bindir}
+install -m 755 -t $RPM_BUILD_ROOT/%{_bindir} bin/%{project}
 
 %post
 %octave_cmd pkg rebuild
@@ -184,11 +189,15 @@ rm -rf commons
 %doc README.txt AUTHORS.txt
 %doc example
 
-
 %files -n %{project}
 %license LICENSE.txt
 %doc README.txt AUTHORS.txt
-%doc example
+%{_bindir}/%{project}
+
+%files -n %{project}-demos
+%license LICENSE.txt
+%doc README.txt AUTHORS.txt
+%doc examples
 
 %changelog
 * Fri Oct 04 2019 Qianqian Fang <fangqq@gmail.com> - 1.7.9-1
