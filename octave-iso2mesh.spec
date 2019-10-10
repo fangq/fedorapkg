@@ -15,7 +15,7 @@ Source3:        http://ftp.mcs.anl.gov/pub/petsc/externalpackages/tetgen1.5.1.ta
 Patch0:         meshfix-remove-rpath.patch
 
 ExcludeArch:    armv7hl
-BuildRequires:  cmake CGAL-devel SuperLU-devel blas-static gcc-g++ zlib-devel octave-devel
+BuildRequires:  cmake CGAL-devel SuperLU-devel blas-static gcc-c++ zlib-devel octave-devel
 
 %if 0%{?fedora} >=32
 Requires:       octave mpfr-devel gmp-devel boost-devel SuperLU
@@ -284,7 +284,9 @@ mv img2mesh.fig inst/
 %build
 %set_build_flags
 cd tools
-%make_build
+# can't use %make_build below because parallel make with CGAL exhausts 
+# vm's memory and crash the building process, use sequential make instead
+make
 cd ../bin
 ln -s tetgen1.5 tetgen
 cd ../
