@@ -5,11 +5,11 @@
 Name:           octave-%{octpkg}
 Version:        1.7.9
 Release:        1%{?dist}
-Summary:        A GPU Mesh-based Monte Carlo photon simulator for MATLAB/Octave
+Summary:        A GPU mesh-based Monte Carlo photon simulator for MATLAB/Octave
 License:        GPLv3+
 URL:            http://mcx.space/#mmc
 Source0:        https://github.com/fangq/%{project}/archive/v%{version}/%{project}-%{version}.tar.gz
-BuildRequires:  octave-devel gcc-c++  vim-common opencl-headers ocl-icd-devel
+BuildRequires:  octave-devel gcc-c++ vim-common opencl-headers ocl-icd-devel
 
 Requires:       octave opencl-filesystem octave-iso2mesh
 Requires(post): octave
@@ -17,17 +17,17 @@ Requires(postun): octave
 Recommends:     %{octpkg}-demos
 
 %description
-MMCLAB is the native MEX version of MMC - Mesh-based Monte Carlo - for 
-MATLAB and GNU Octave. By converting the input and output files into 
-convenient in-memory variables, MMCLAB is very intuitive to use and 
-straightforward to be integrated with mesh generation and post-simulation 
-analyses. Because MMCLAB contains the same computational codes for 
-OpenCL-based photon simulation as in a MMC binary, running MMCLAB 
-inside MATLAB is expected to give similar speed as running a standalone 
+MMCLAB is the native MEX version of MMC - Mesh-based Monte Carlo - for
+MATLAB and GNU Octave. By converting the input and output files into
+convenient in-memory variables, MMCLAB is very intuitive to use and
+straightforward to be integrated with mesh generation and post-simulation
+analyses. Because MMCLAB contains the same computational codes for
+OpenCL-based photon simulation as in a MMC binary, running MMCLAB
+inside MATLAB is expected to give similar speed as running a standalone
 MMC binary using either a CPU or a GPU.
 
 %package -n %{octpkg}-demos
-Summary:        Example datasets and scripts for the MMCLAB toolbox
+Summary:        Example datasets and scripts for MMCLAB toolbox
 BuildArch:      noarch
 Requires:       octave octave-%{octpkg} octave-iso2mesh
 
@@ -35,21 +35,21 @@ Requires:       octave octave-%{octpkg} octave-iso2mesh
 This package contains the demo script and sample datasets for octave-%{octpkg}. 
 
 %package -n %{project}
-Summary:        Example datasets and scripts for the MMCLAB toolbox
+Summary:        Example datasets and scripts for mesh-based Monte Carlo (MMC)
 BuildRequires:  octave-devel gcc-c++  vim-common opencl-headers ocl-icd-devel
 Requires:       octave opencl-filesystem octave-iso2mesh
 
 %description -n %{project}
-Mesh-based Monte Carlo (MMC) is a 3D Monte Carlo (MC) simulation software 
+Mesh-based Monte Carlo (MMC) is a 3D Monte Carlo (MC) simulation software
 for photon transport in complex turbid media. MMC combines the strengths
-of the MC-based technique and the finite-element (FE) method: on the 
-one hand, it can handle general media, including low-scattering ones, 
-as in the MC method; on the other hand, it can use an FE-like tetrahedral 
+of the MC-based technique and the finite-element (FE) method: on the
+one hand, it can handle general media, including low-scattering ones,
+as in the MC method; on the other hand, it can use an FE-like tetrahedral
 mesh to represent curved boundaries and complex structures, making it
 even more accurate, flexible, and memory efficient. MMC uses the
-state-of-the-art ray-tracing techniques to simulate photon propagation in 
+state-of-the-art ray-tracing techniques to simulate photon propagation in
 a mesh space. It has been extensively optimized for excellent computational
-efficiency and portability. MMC currently supports both multi-threaded 
+efficiency and portability. MMC currently supports both multi-threaded
 parallel computing and GPU to maximize performance on modern processors.
 
 %package -n %{project}-demos
@@ -140,22 +140,24 @@ MMCLAB
 EOF
 
 %build
-cd src
+pushd src
 %make_build oct LFLAGS="-L`octave-config -p OCTLIBDIR` -lOpenCL"
-cd ../
-rm mmclab/*.txt
-mv mmclab/example .
-mv mmclab inst
+popd
+rm %{octpkg}/*.txt
+mv %{octpkg}/example .
+mv %{octpkg}/*.mex .
+mv %{octpkg} inst
 mv src/Makefile .
+ln -s %{_libexecdir}/%{octpkg}/%{branch}.mex inst/%{branch}.mex
 %octave_pkg_build
 
 mv Makefile src
-cd src
+pushd src
 %make_build clean
 %make_build
 mkdir -p ../bin
 cp bin/%{branch} ../bin/%{project}
-cd ../
+popd
 
 %if 0%{?fedora} <=30
    %global octave_tar_suffix any-none
@@ -163,8 +165,12 @@ cd ../
 
 %install
 %octave_pkg_install
-install -m 755 -d $RPM_BUILD_ROOT/%{_bindir}
-install -m 755 -t $RPM_BUILD_ROOT/%{_bindir} bin/%{project}
+
+install -m 0755 -vd %{buildroot}%{_libexecdir}/%{octpkg}
+install -m 0755 -vp %{branch}.mex %{buildroot}%{_libexecdir}/%{octpkg}/
+
+install -m 0755 -vd %{buildroot}%{_bindir}
+install -m 0755 -vt %{buildroot}%{_bindir} bin/%{project}
 
 %post
 %octave_cmd pkg rebuild
@@ -178,6 +184,8 @@ install -m 755 -t $RPM_BUILD_ROOT/%{_bindir} bin/%{project}
 %files
 %license LICENSE.txt
 %doc README.txt AUTHORS.txt
+%dir %{_libexecdir}/%{octpkg}
+%{_libexecdir}/%{octpkg}/*.mex
 %dir %{octpkgdir}
 %{octpkgdir}/*.m
 %{octpkgdir}/*.mex
