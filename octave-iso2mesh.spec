@@ -2,9 +2,13 @@
 
 Name:           octave-%{octpkg}
 Version:        1.9.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A 3D surface and volumetric mesh generator for MATLAB/Octave
-License:        GPLv3+
+# Main package: GPLv3+
+# JMeshLib: GPLv2
+# Tetgen: AGPLv3+
+License: GPLv3+ and GPLv2 and AGPLv3+
+
 URL:            http://iso2mesh.sf.net
 # the following utilities are called internally by iso2mesh (stored under a private folder),
 # this is needed for making outputs reproducible
@@ -28,16 +32,16 @@ Requires(postun): octave
 
 %description
 Iso2Mesh is a MATLAB/Octave-based mesh generation toolbox,
-designed for easy creation of high quality surface and 
-tetrahedral meshes from 3D volumetric images. It contains 
-a rich set of mesh processing scripts/programs, working 
-either independently or interacting with external free 
+designed for easy creation of high quality surface and
+tetrahedral meshes from 3D volumetric images. It contains
+a rich set of mesh processing scripts/programs, working
+either independently or interacting with external free
 meshing utilities. Iso2Mesh toolbox can directly convert
-a 3D image stack, including binary, segmented or gray-scale 
-images such as MRI or CT scans, into quality volumetric 
-meshes. This makes it particularly suitable for multi-modality 
+a 3D image stack, including binary, segmented or gray-scale
+images such as MRI or CT scans, into quality volumetric
+meshes. This makes it particularly suitable for multi-modality
 medical imaging data analysis and multi-physics modeling.
-Iso2Mesh is cross-platform and is compatible with both MATLAB 
+Iso2Mesh is cross-platform and is compatible with both MATLAB
 and GNU Octave.
 
 %package -n %{octpkg}-demos
@@ -47,7 +51,7 @@ Requires:       octave octave-%{octpkg}
 Recommends:     %{octpkg}-demos
 
 %description -n %{octpkg}-demos
-This package contains the demo script and sample datasets for octave-%{octpkg}. 
+This package contains the demo script and sample datasets for octave-%{octpkg}.
 
 %prep
 %setup -q -b 1 -n %{octpkg}-%{version}
@@ -72,16 +76,16 @@ Title: %{summary}
 Author: Qianqian Fang <fangqq@gmail.com>
 Maintainer: Qianqian Fang <fangqq@gmail.com>
 Description: Iso2Mesh is a MATLAB/Octave-based mesh generation toolbox,
- designed for easy creation of high quality surface and 
- tetrahedral meshes from 3D volumetric images. It contains 
- a rich set of mesh processing scripts/programs, working 
- either independently or interacting with external free 
+ designed for easy creation of high quality surface and
+ tetrahedral meshes from 3D volumetric images. It contains
+ a rich set of mesh processing scripts/programs, working
+ either independently or interacting with external free
  meshing utilities. Iso2Mesh toolbox can directly convert
- a 3D image stack, including binary, segmented or gray-scale 
- images such as MRI or CT scans, into quality volumetric 
- meshes. This makes it particularly suitable for multi-modality 
+ a 3D image stack, including binary, segmented or gray-scale
+ images such as MRI or CT scans, into quality volumetric
+ meshes. This makes it particularly suitable for multi-modality
  medical imaging data analysis and multi-physics modeling.
- Iso2Mesh is cross-platform and is compatible with both MATLAB 
+ Iso2Mesh is cross-platform and is compatible with both MATLAB
  and GNU Octave.
 
 Categories: Mesh
@@ -283,14 +287,21 @@ mv img2mesh.fig inst/
 
 %build
 %set_build_flags
-cd tools
-# can't use %make_build below because parallel make with CGAL exhausts 
+pushd tools
+# can't use %make_build below because parallel make with CGAL exhausts
 # vm's memory and crash the building process, use sequential make instead
 make
-cd ../bin
+popd
+pushd bin
 ln -s tetgen1.5 tetgen
-cd ../
-mv bin inst
+popd
+
+mkdir inst/bin
+pushd bin
+for exec in *; do
+   ln -s %{_libexecdir}/%{octpkg}/$exec ../inst/bin/$exec
+done
+popd
 %octave_pkg_build
 
 %if 0%{?fedora} <=30
@@ -299,6 +310,8 @@ mv bin inst
 
 %install
 %octave_pkg_install
+install -m 0755 -vd  %{buildroot}%{_libexecdir}/%{octpkg}
+install -m 0755 -vp  bin/* %{buildroot}%{_libexecdir}/%{octpkg}/
 
 %post
 %octave_cmd pkg rebuild
@@ -318,6 +331,7 @@ mv bin inst
 %dir %{octpkgdir}
 %dir %{octpkgdir}/doc
 %dir %{octpkgdir}/bin
+%{_libexecdir}/%{octpkg}
 %{octpkgdir}/doc/*
 %{octpkgdir}/bin/*
 %{octpkgdir}/*.m
@@ -330,5 +344,9 @@ mv bin inst
 %doc sample
 
 %changelog
+* Wed Oct 10 2019 Qianqian Fang <fangqq@gmail.com> - 1.9.1-2
+- Fix licenses
+- Move binaries to libexec
+
 * Wed Oct 02 2019 Qianqian Fang <fangqq@gmail.com> - 1.9.1-1
 - Initial package
