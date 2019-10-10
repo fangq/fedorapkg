@@ -288,9 +288,7 @@ mv img2mesh.fig inst/
 %build
 %set_build_flags
 pushd tools
-# can't use %make_build below because parallel make with CGAL exhausts
-# vm's memory and crash the building process, use sequential make instead
-make
+%make_build
 popd
 pushd bin
 ln -s tetgen1.5 tetgen
@@ -344,7 +342,7 @@ install -m 0755 -vp  bin/* %{buildroot}%{_libexecdir}/%{octpkg}/
 %doc sample
 
 %changelog
-* Wed Oct 10 2019 Qianqian Fang <fangqq@gmail.com> - 1.9.1-2
+* Thu Oct 10 2019 Qianqian Fang <fangqq@gmail.com> - 1.9.1-2
 - Fix licenses
 - Move binaries to libexec
 
