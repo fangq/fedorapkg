@@ -1,25 +1,45 @@
 %global octpkg mmclab
 %global project mmc
 %global branch  mmcl
-%global _binaries_in_noarch_packages_terminate_build   0
-%global debug_package %{nil}
 
 Name:           octave-%{octpkg}
 Version:        1.7.9
 Release:        1%{?dist}
-Summary:        MMCLAB - A GPU Mesh-based Monte Carlo photon simulator for MATLAB/Octave
+Summary:        A GPU Mesh-based Monte Carlo photon simulator for MATLAB/Octave
 License:        GPLv3+
 URL:            http://mcx.space/#mmc
 Source0:        https://github.com/fangq/%{project}/archive/v%{version}/%{project}-%{version}.tar.gz
-BuildArch:      noarch
-ExclusiveArch:  %{ix86} x86_64
-BuildRequires:  octave opencl-headers ocl-icd-devel
+BuildRequires:  octave-devel gcc-c++  vim-common opencl-headers ocl-icd-devel
 
-Requires:       octave opencl-filesystem
+Requires:       octave opencl-filesystem octave-iso2mesh
 Requires(post): octave
 Requires(postun): octave
+Recommends:     %{octpkg}-demos
 
 %description
+MMCLAB is the native MEX version of MMC - Mesh-based Monte Carlo - for 
+MATLAB and GNU Octave. By converting the input and output files into 
+convenient in-memory variables, MMCLAB is very intuitive to use and 
+straightforward to be integrated with mesh generation and post-simulation 
+analyses. Because MMCLAB contains the same computational codes for 
+OpenCL-based photon simulation as in a MMC binary, running MMCLAB 
+inside MATLAB is expected to give similar speed as running a standalone 
+MMC binary using either a CPU or a GPU.
+
+%package -n %{octpkg}-demos
+Summary:        Example datasets and scripts for the MMCLAB toolbox
+BuildArch:      noarch
+Requires:       octave octave-%{octpkg} octave-iso2mesh
+
+%description -n %{octpkg}-demos
+This package contains the demo script and sample datasets for octave-%{octpkg}. 
+
+%package -n %{project}
+Summary:        Example datasets and scripts for the MMCLAB toolbox
+BuildRequires:  octave-devel gcc-c++  vim-common opencl-headers ocl-icd-devel
+Requires:       octave opencl-filesystem octave-iso2mesh
+
+%description -n %{project}
 Mesh-based Monte Carlo (MMC) is a 3D Monte Carlo (MC) simulation software 
 for photon transport in complex turbid media. MMC combines the strengths
 of the MC-based technique and the finite-element (FE) method: on the 
@@ -32,9 +52,17 @@ a mesh space. It has been extensively optimized for excellent computational
 efficiency and portability. MMC currently supports both multi-threaded 
 parallel computing and GPU to maximize performance on modern processors.
 
+%package -n %{project}-demos
+Summary:        Example datasets and scripts for Mesh-based Monte Carlo - MMC
+BuildArch:      noarch
+Requires:       octave octave-iso2mesh
+
+%description -n %{project}-demos
+This package contains the demo script and sample datasets for MMC. 
+
 %prep
 %autosetup -n %{project}-%{version}
-rm -rf .git_filters .gitattributes deploy webmmc examples
+rm -rf .git_filters .gitattributes deploy webmmc
 cp matlab/*.m mmclab
 
 cp LICENSE.txt COPYING
@@ -114,6 +142,8 @@ EOF
 %build
 cd src
 make oct LIBOPENCLDIR=`octave-config -p OCTLIBDIR`
+make clean
+make
 cd ../
 rm README.txt
 mv mmclab/README.txt .
@@ -123,6 +153,10 @@ mv mmclab inst
 rm -rf src
 rm -rf commons
 %octave_pkg_build
+
+%if 0%{?fedora} <=30
+   %global octave_tar_suffix any-none
+%endif
 
 %install
 %octave_pkg_install
@@ -138,12 +172,23 @@ rm -rf commons
 
 %files
 %license LICENSE.txt
-%doc example README.txt AUTHORS.txt
+%doc README.txt AUTHORS.txt
 %dir %{octpkgdir}
 %{octpkgdir}/*.m
 %{octpkgdir}/*.mex
 %doc %{octpkgdir}/doc-cache
 %{octpkgdir}/packinfo
+
+%files -n %{octpkg}-demos
+%license LICENSE.txt
+%doc README.txt AUTHORS.txt
+%doc example
+
+
+%files -n %{project}
+%license LICENSE.txt
+%doc README.txt AUTHORS.txt
+%doc example
 
 %changelog
 * Fri Oct 04 2019 Qianqian Fang <fangqq@gmail.com> - 1.7.9-1
