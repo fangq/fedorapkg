@@ -145,10 +145,8 @@ pushd src
 popd
 rm %{octpkg}/*.txt
 mv %{octpkg}/example .
-mv %{octpkg}/*.mex .
 mv %{octpkg} inst
 mv src/Makefile .
-ln -s %{_libexecdir}/%{octpkg}/%{branch}.mex inst/%{branch}.mex
 %octave_pkg_build
 
 mv Makefile src
@@ -166,9 +164,6 @@ popd
 %install
 %octave_pkg_install
 
-install -m 0755 -vd %{buildroot}%{_libexecdir}/%{octpkg}
-install -m 0755 -vp %{branch}.mex %{buildroot}%{_libexecdir}/%{octpkg}/
-
 install -m 0755 -vd %{buildroot}%{_bindir}
 install -m 0755 -vt %{buildroot}%{_bindir} bin/%{project}
 
@@ -184,8 +179,6 @@ install -m 0755 -vt %{buildroot}%{_bindir} bin/%{project}
 %files
 %license LICENSE.txt
 %doc README.txt AUTHORS.txt
-%dir %{_libexecdir}/%{octpkg}
-%{_libexecdir}/%{octpkg}/*.mex
 %dir %{octpkgdir}
 %{octpkgdir}/*.m
 %{octpkgdir}/*.mex
