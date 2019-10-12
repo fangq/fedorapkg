@@ -1,9 +1,8 @@
 %global octpkg zmat
-%global libpkg zipmat
 
 Name:           octave-%{octpkg}
 Version:        0.9.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A portable data compression/decompression toolbox for MATLAB/Octave
 License:        GPLv3+ or BSD
 URL:            https://github.com/fangq/%{octpkg}
@@ -16,22 +15,21 @@ Requires(post): octave
 Requires(postun): octave
 
 %description
-ZMat is a portable mex function to enable zlib/gzip/lzma/lzip/lz4/lz4hc 
-based data compression/decompression and base64 encoding/decoding support 
-in MATLAB and GNU Octave. It is fast and compact, can process a large 
-array within a fraction of a second. Among the 6 supported compression 
-methods, lz4 is the fastest for compression/decompression; lzma is the 
-slowest but has the highest compression ratio; zlib/gzip have the best 
+ZMat is a portable mex function to enable zlib/gzip/lzma/lzip/lz4/lz4hc
+based data compression/decompression and base64 encoding/decoding support
+in MATLAB and GNU Octave. It is fast and compact, can process a large
+array within a fraction of a second. Among the 6 supported compression
+methods, lz4 is the fastest for compression/decompression; lzma is the
+slowest but has the highest compression ratio; zlib/gzip have the best
 balance between speed and compression time.
 
 
-%package devel
+%package -n %{octpkg}-devel
 Summary:        An eazy-to-use data compression library
-Provides:       %{octpkg}-static = %{version}-%{release}
 Requires:       zlib
 
-%description devel
-The %{name}-devel package provides the headers files and tools you may need to 
+%description -n %{octpkg}-devel
+The %{octpkg}-devel package provides the headers files and tools you may need to
 develop applications using zmat.
 
 %prep
@@ -48,12 +46,12 @@ Date: %(date +"%Y-%d-%m")
 Title: %{summary}
 Author: Qianqian Fang <fangqq@gmail.com>
 Maintainer: Qianqian Fang <fangqq@gmail.com>
-Description: ZMat is a portable mex function to enable zlib/gzip/lzma/lzip/lz4/lz4hc 
- based data compression/decompression and base64 encoding/decoding support 
- in MATLAB and GNU Octave. It is fast and compact, can process a large 
- array within a fraction of a second. Among the 6 supported compression 
- methods, lz4 is the fastest for compression/decompression; lzma is the 
- slowest but has the highest compression ratio; zlib/gzip have the best 
+Description: ZMat is a portable mex function to enable zlib/gzip/lzma/lzip/lz4/lz4hc
+ based data compression/decompression and base64 encoding/decoding support
+ in MATLAB and GNU Octave. It is fast and compact, can process a large
+ array within a fraction of a second. Among the 6 supported compression
+ methods, lz4 is the fastest for compression/decompression; lzma is the
+ slowest but has the highest compression ratio; zlib/gzip have the best
  balance between speed and compression time.
 
 Categories: Zip
@@ -73,23 +71,28 @@ mv *.m inst/
 %build
 mkdir lib
 mkdir include
-cd src/easylzma
+pushd src
+pushd easylzma
 %cmake .
 %make_build
 mv easylzma-0.0.7 easylzma-0.0.8
-cd ../
+popd
+%make_build oct
+popd
+mv *.mex inst/
+mv src/Makefile .
+%octave_pkg_build
+
+mv Makefile src
+pushd src
 %make_build clean
 %make_build lib BINARY=lib%{octpkg}.a
-cp ../lib%{octpkg}.a ../lib
+cp ../lib%{octpkg}.a ../lib/lib%{octpkg}.a.%{version}
 cp zmatlib.h ../include
 %make_build clean
 %make_build dll BINARY=lib%{octpkg}.so
-mv ../lib%{octpkg}.so ../lib
-%make_build oct
-cd ../
-mv *.mex inst/
-rm -rf src
-%octave_pkg_build
+mv ../lib%{octpkg}.so ../lib/lib%{octpkg}.so.%{version}
+popd
 
 %if 0%{?fedora} <=30
    %global octave_tar_suffix any-none
@@ -98,12 +101,16 @@ rm -rf src
 %install
 %octave_pkg_install
 
-install -m 755 -d $RPM_BUILD_ROOT/%{_includedir}/
-install -m 644 -t $RPM_BUILD_ROOT/%{_includedir}/ include/%{octpkg}lib.h
+install -m 755 -d %{buildroot}/%{_includedir}/
+install -m 644 -t %{buildroot}/%{_includedir}/ include/%{octpkg}lib.h
 
-install -m 755 -d $RPM_BUILD_ROOT/%{_libdir}/
-install -m 755 -t $RPM_BUILD_ROOT/%{_libdir}/ lib/lib%{octpkg}.so
-install -m 755 -t $RPM_BUILD_ROOT/%{_libdir}/ lib/lib%{octpkg}.a
+install -m 755 -d %{buildroot}/%{_libdir}/
+install -m 755 -t %{buildroot}/%{_libdir}/ lib/lib%{octpkg}.so.%{version}
+install -m 755 -t %{buildroot}/%{_libdir}/ lib/lib%{octpkg}.a.%{version}
+pushd %{buildroot}/%{_libdir}
+    ln -s lib%{octpkg}.so.%{version} lib%{octpkg}.so
+    ln -s lib%{octpkg}.a.%{version}  lib%{octpkg}.a
+popd
 
 %post
 %octave_cmd pkg rebuild
@@ -127,15 +134,20 @@ install -m 755 -t $RPM_BUILD_ROOT/%{_libdir}/ lib/lib%{octpkg}.a
 %{octpkgdir}/packinfo
 
 
-%files devel
+%files -n %{octpkg}-devel
 %license LICENSE.txt
 %doc README.rst
 %doc AUTHORS.txt
 %{_includedir}/%{octpkg}lib.h
-%{_libdir}/%{libpkg}.so
-%{_libdir}/%{libpkg}.a
+%{_libdir}/lib%{octpkg}.so.%{version}
+%{_libdir}/lib%{octpkg}.so
+%{_libdir}/lib%{octpkg}.a.%{version}
+%{_libdir}/lib%{octpkg}.a
 
 
 %changelog
+* Fri Oct 11 2019 Qianqian Fang <fangqq@gmail.com> - 0.9.1-2
+- Add zmat-devel as a subpackage
+
 * Tue Oct 01 2019 Qianqian Fang <fangqq@gmail.com> - 0.9.1-1
 - Initial package
