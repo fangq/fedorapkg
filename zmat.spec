@@ -1,7 +1,7 @@
 Name:           zmat
 Version:        0.9.2
 Release:        1%{?dist}
-Summary:        An eazy-to-use data compression library
+Summary:        An easy-to-use data compression library
 License:        GPLv3+ or BSD
 URL:            https://github.com/fangq/%{name}
 Source0:        https://github.com/fangq/%{name}/archive/v%{version}/%{name}-%{version}.tar.gz
@@ -20,9 +20,9 @@ between speed and compression time.
 
 
 %package -n %{name}-devel
-Summary:        Development files for zmat - an eazy-to-use data compression library
+Summary:        Development files for zmat - an easy-to-use data compression library
 Provides:       %{name}-static = %{version}-%{release}
-Requires:       %{name}
+Requires:       %{name} lz4-devel
 
 %description -n %{name}-devel
 The %{name}-devel package provides the headers files and tools you may need to
@@ -44,6 +44,9 @@ pushd easylzma
 %cmake .
 %make_build
 mv easylzma-0.0.7 easylzma-0.0.8
+pwd
+ls easylzma-0.0.8/include/
+cp -r easylzma-0.0.8/include/easylzma ../../include
 popd
 popd
 
@@ -61,6 +64,11 @@ popd
 %install
 install -m 755 -d %{buildroot}/%{_includedir}/
 install -m 644 -t %{buildroot}/%{_includedir}/ include/%{name}lib.h
+
+install -m 755 -d %{buildroot}/%{_includedir}/easylzma
+install -m 644 -t %{buildroot}/%{_includedir}/easylzma include/easylzma/common.h
+install -m 644 -t %{buildroot}/%{_includedir}/easylzma include/easylzma/compress.h
+install -m 644 -t %{buildroot}/%{_includedir}/easylzma include/easylzma/decompress.h
 
 install -m 755 -d %{buildroot}/%{_libdir}/
 install -m 755 -t %{buildroot}/%{_libdir}/ lib/lib%{name}.so.%{version}
@@ -82,7 +90,11 @@ popd
 %license LICENSE.txt
 %doc README.rst
 %doc AUTHORS.txt
+%dir %{_includedir}/easylzma
 %{_includedir}/%{name}lib.h
+%{_includedir}/easylzma/common.h
+%{_includedir}/easylzma/compress.h
+%{_includedir}/easylzma/decompress.h
 %{_libdir}/lib%{name}.so
 %{_libdir}/lib%{name}.a
 
