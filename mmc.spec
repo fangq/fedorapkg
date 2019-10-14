@@ -1,5 +1,5 @@
-%global octpkg mmclab
 %global project mmc
+%global octpkg mmclab
 %global branch  mmcl
 
 Name:           %{project}
@@ -148,6 +148,7 @@ rm %{octpkg}/*.txt
 mv %{octpkg}/example .
 mv %{octpkg} inst
 mv src/Makefile .
+chmod 644 -R examples
 %octave_pkg_build
 
 mv Makefile src
