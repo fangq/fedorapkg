@@ -2,21 +2,38 @@
 %global project mmc
 %global branch  mmcl
 
-Name:           octave-%{octpkg}
+Name:           %{project}
 Version:        1.7.9
 Release:        1%{?dist}
-Summary:        A GPU mesh-based Monte Carlo photon simulator for MATLAB/Octave
 License:        GPLv3+
 URL:            http://mcx.space/#mmc
 Source0:        https://github.com/fangq/%{project}/archive/v%{version}/%{project}-%{version}.tar.gz
+Summary:        A GPU-based mesh-based Monte Carlo (MMC) photon simulator
 BuildRequires:  octave-devel gcc-c++ vim-common opencl-headers ocl-icd-devel
-
 Requires:       octave opencl-filesystem octave-iso2mesh
 Requires(post): octave
 Requires(postun): octave
-Recommends:     %{octpkg}-demos
 
 %description
+Mesh-based Monte Carlo (MMC) is a 3D Monte Carlo (MC) simulation software
+for photon transport in complex turbid media. MMC combines the strengths
+of the MC-based technique and the finite-element (FE) method: on the
+one hand, it can handle general media, including low-scattering ones,
+as in the MC method; on the other hand, it can use an FE-like tetrahedral
+mesh to represent curved boundaries and complex structures, making it
+even more accurate, flexible, and memory efficient. MMC uses the
+state-of-the-art ray-tracing techniques to simulate photon propagation in
+a mesh space. It has been extensively optimized for excellent computational
+efficiency and portability. MMC currently supports both multi-threaded
+parallel computing and GPU to maximize performance on modern processors.
+
+%package -n octave-%{octpkg}
+Summary:        A GPU mesh-based Monte Carlo photon simulator for MATLAB/Octave
+BuildRequires:  octave-devel gcc-c++ vim-common opencl-headers ocl-icd-devel
+Requires:       octave opencl-filesystem octave-iso2mesh
+Recommends:     %{octpkg}-demos
+
+%description -n octave-%{octpkg}
 MMCLAB is the native MEX version of MMC - Mesh-based Monte Carlo - for
 MATLAB and GNU Octave. By converting the input and output files into
 convenient in-memory variables, MMCLAB is very intuitive to use and
@@ -32,25 +49,7 @@ BuildArch:      noarch
 Requires:       octave octave-%{octpkg} octave-iso2mesh
 
 %description -n %{octpkg}-demos
-This package contains the demo script and sample datasets for octave-%{octpkg}. 
-
-%package -n %{project}
-Summary:        Example datasets and scripts for mesh-based Monte Carlo (MMC)
-BuildRequires:  octave-devel gcc-c++  vim-common opencl-headers ocl-icd-devel
-Requires:       octave opencl-filesystem octave-iso2mesh
-
-%description -n %{project}
-Mesh-based Monte Carlo (MMC) is a 3D Monte Carlo (MC) simulation software
-for photon transport in complex turbid media. MMC combines the strengths
-of the MC-based technique and the finite-element (FE) method: on the
-one hand, it can handle general media, including low-scattering ones,
-as in the MC method; on the other hand, it can use an FE-like tetrahedral
-mesh to represent curved boundaries and complex structures, making it
-even more accurate, flexible, and memory efficient. MMC uses the
-state-of-the-art ray-tracing techniques to simulate photon propagation in
-a mesh space. It has been extensively optimized for excellent computational
-efficiency and portability. MMC currently supports both multi-threaded
-parallel computing and GPU to maximize performance on modern processors.
+This package contains the demo script and sample datasets for octave-%{octpkg}.
 
 %package -n %{project}-demos
 Summary:        Example datasets and scripts for Mesh-based Monte Carlo - MMC
@@ -74,26 +73,24 @@ Date: %(date +"%Y-%d-%m")
 Title: %{summary}
 Author: Qianqian Fang <fangqq@gmail.com>
 Maintainer: Qianqian Fang <fangqq@gmail.com>
-Description: Mesh-based Monte Carlo (MMC) is a 3D Monte Carlo (MC) simulation software 
+Description: Mesh-based Monte Carlo (MMC) is a 3D Monte Carlo (MC) simulation software
  for photon transport in complex turbid media. MMC combines the strengths
- of the MC-based technique and the finite-element (FE) method: on the 
- one hand, it can handle general media, including low-scattering ones, 
- as in the MC method; on the other hand, it can use an FE-like tetrahedral 
+ of the MC-based technique and the finite-element (FE) method: on the
+ one hand, it can handle general media, including low-scattering ones,
+ as in the MC method; on the other hand, it can use an FE-like tetrahedral
  mesh to represent curved boundaries and complex structures, making it
  even more accurate, flexible, and memory efficient. MMC uses the
  state-of-the-art ray-tracing techniques to simulate photon propagation in 
  a mesh space. It has been extensively optimized for excellent computational
- efficiency and portability. MMC currently supports both multi-threaded 
+ efficiency and portability. MMC currently supports both multi-threaded
  parallel computing and GPU to maximize performance on a multi-core processor.
+URL: %{url}
+Depends: iso2mesh
 EOF
 
 cat > INDEX << EOF
 mmclab >> MMCLAB
 MMCLAB
- besselhprime
- besseljprime
- besselyprime
- cart2sphorigin
  generate_g1
  genT5mesh
  genT6mesh
@@ -118,6 +115,11 @@ MMCLAB
  readmmcmesh
  readmmcnode
  savemmcmesh
+sphdiffusion
+ besselhprime
+ besseljprime
+ besselyprime
+ cart2sphorigin
  spbesselh
  spbesselhprime
  spbesselj
@@ -140,9 +142,8 @@ MMCLAB
 EOF
 
 %build
-pushd src
-%make_build oct LFLAGS="-L`octave-config -p OCTLIBDIR` -lOpenCL"
-popd
+%{set_opt_flags}
+%make_build -C src oct LFLAGS="-L`octave-config -p OCTLIBDIR` -lOpenCL"
 rm %{octpkg}/*.txt
 mv %{octpkg}/example .
 mv %{octpkg} inst
@@ -176,7 +177,17 @@ install -m 0755 -vt %{buildroot}%{_bindir} bin/%{project}
 %postun
 %octave_cmd pkg rebuild
 
-%files
+%files -n %{project}
+%license LICENSE.txt
+%doc README.txt AUTHORS.txt
+%{_bindir}/%{project}
+
+%files -n %{project}-demos
+%license LICENSE.txt
+%doc README.txt AUTHORS.txt
+%doc examples
+
+%files -n octave-%{octpkg}
 %license LICENSE.txt
 %doc README.txt AUTHORS.txt
 %dir %{octpkgdir}
@@ -190,15 +201,6 @@ install -m 0755 -vt %{buildroot}%{_bindir} bin/%{project}
 %doc README.txt AUTHORS.txt
 %doc example
 
-%files -n %{project}
-%license LICENSE.txt
-%doc README.txt AUTHORS.txt
-%{_bindir}/%{project}
-
-%files -n %{project}-demos
-%license LICENSE.txt
-%doc README.txt AUTHORS.txt
-%doc examples
 
 %changelog
 * Fri Oct 04 2019 Qianqian Fang <fangqq@gmail.com> - 1.7.9-1
