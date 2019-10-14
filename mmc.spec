@@ -6,7 +6,7 @@ Name:           %{project}
 Version:        1.7.9
 Release:        1%{?dist}
 License:        GPLv3+
-URL:            http://mcx.space/#mmc
+URL:            http://mcx.space/mmc
 Source0:        https://github.com/fangq/%{project}/archive/v%{version}/%{project}-%{version}.tar.gz
 Summary:        A GPU-based mesh-based Monte Carlo (MMC) photon simulator
 BuildRequires:  octave-devel gcc-c++ vim-common opencl-headers ocl-icd-devel
@@ -148,7 +148,6 @@ rm %{octpkg}/*.txt
 mv %{octpkg}/example .
 mv %{octpkg} inst
 mv src/Makefile .
-chmod 644 -R examples
 %octave_pkg_build
 
 mv Makefile src
