@@ -64,7 +64,7 @@ install -m 644 -t %{buildroot}/%{_includedir}/ include/%{name}lib.h
 
 install -m 755 -d %{buildroot}/%{_libdir}/
 install -m 755 -t %{buildroot}/%{_libdir}/ lib/lib%{name}.so.%{version}
-install -m 755 -t %{buildroot}/%{_libdir}/ lib/lib%{name}.a
+install -m 644 -t %{buildroot}/%{_libdir}/ lib/lib%{name}.a
 pushd %{buildroot}/%{_libdir}
     ln -s lib%{name}.so.%{version} lib%{name}.so
 popd
