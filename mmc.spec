@@ -142,7 +142,7 @@ sphdiffusion
 EOF
 
 %build
-%{set_opt_flags}
+%set_build_flags
 %make_build -C src oct LFLAGS="-L`octave-config -p OCTLIBDIR` -lOpenCL"
 rm %{octpkg}/*.txt
 mv %{octpkg}/example .
