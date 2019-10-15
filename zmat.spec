@@ -68,7 +68,7 @@ popd
 
 
 %install
-install -m 755 -d %{buildroot}/%{_includedir}/
+install -m 755 -pd %{buildroot}/%{_includedir}/
 install -m 644 -pt %{buildroot}/%{_includedir}/ include/%{name}lib.h
 
 install -m 755 -pd %{buildroot}/%{_includedir}/easylzma
