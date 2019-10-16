@@ -169,13 +169,13 @@ popd
 install -m 0755 -pd %{buildroot}%{_bindir}
 install -m 0755 -pt %{buildroot}%{_bindir} bin/%{name}
 
-%post
+%post -n octave-%{octpkg}
 %octave_cmd pkg rebuild
 
-%preun
+%preun -n octave-%{octpkg}
 %octave_pkg_preun
 
-%postun
+%postun -n octave-%{octpkg}
 %octave_cmd pkg rebuild
 
 %files
