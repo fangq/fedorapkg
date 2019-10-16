@@ -1,13 +1,12 @@
-%global project mmc
 %global octpkg mmclab
 %global branch  mmcl
 
-Name:           %{project}
+Name:           mmc
 Version:        1.7.9
 Release:        1%{?dist}
 License:        GPLv3+
 URL:            http://mcx.space/mmc
-Source0:        https://github.com/fangq/%{project}/archive/v%{version}/%{project}-%{version}.tar.gz
+Source0:        https://github.com/fangq/%{name}/archive/v%{version}/%{name}-%{version}.tar.gz
 Summary:        A GPU-based mesh-based Monte Carlo (MMC) photon simulator
 BuildRequires:  octave-devel gcc-c++ vim-common opencl-headers ocl-icd-devel
 Requires:       octave opencl-filesystem octave-iso2mesh
@@ -51,16 +50,18 @@ Requires:       octave octave-%{octpkg} octave-iso2mesh
 %description -n %{octpkg}-demos
 This package contains the demo script and sample datasets for octave-%{octpkg}.
 
-%package -n %{project}-demos
+
+%package demos
 Summary:        Example datasets and scripts for Mesh-based Monte Carlo - MMC
 BuildArch:      noarch
 Requires:       octave octave-iso2mesh
 
-%description -n %{project}-demos
+%description demos
 This package contains the demo script and sample datasets for MMC. 
 
+
 %prep
-%autosetup -n %{project}-%{version}
+%autosetup -n %{name}-%{version}
 rm -rf .git_filters .gitattributes deploy webmmc
 cp matlab/*.m mmclab
 
@@ -115,7 +116,7 @@ MMCLAB
  readmmcmesh
  readmmcnode
  savemmcmesh
-sphdiffusion
+SphDiffusion Toolbox
  besselhprime
  besseljprime
  besselyprime
@@ -143,7 +144,7 @@ EOF
 
 %build
 %set_build_flags
-%make_build -C src oct LFLAGS="-L`octave-config -p OCTLIBDIR` -lOpenCL"
+%make_build -C src oct LFLAGS="-L`octave-config -p OCTLIBDIR` -lOpenCL" USERCCFLAGS="%{optflags} -DUSE_OS_TIMER -DUSE_OPENCL"
 rm %{octpkg}/*.txt
 mv %{octpkg}/example .
 mv %{octpkg} inst
@@ -153,9 +154,9 @@ mv src/Makefile .
 mv Makefile src
 pushd src
 %make_build clean
-%make_build
+%make_build USERCCFLAGS="%{optflags} -DUSE_OS_TIMER -DUSE_OPENCL"
 mkdir -p ../bin
-cp bin/%{branch} ../bin/%{project}
+cp bin/%{branch} ../bin/%{name}
 popd
 
 %if 0%{?fedora} <=30
@@ -165,8 +166,8 @@ popd
 %install
 %octave_pkg_install
 
-install -m 0755 -vd %{buildroot}%{_bindir}
-install -m 0755 -vt %{buildroot}%{_bindir} bin/%{project}
+install -m 0755 -pd %{buildroot}%{_bindir}
+install -m 0755 -pt %{buildroot}%{_bindir} bin/%{name}
 
 %post
 %octave_cmd pkg rebuild
@@ -177,12 +178,12 @@ install -m 0755 -vt %{buildroot}%{_bindir} bin/%{project}
 %postun
 %octave_cmd pkg rebuild
 
-%files -n %{project}
+%files
 %license LICENSE.txt
 %doc README.txt AUTHORS.txt
-%{_bindir}/%{project}
+%{_bindir}/%{name}
 
-%files -n %{project}-demos
+%files demos
 %license LICENSE.txt
 %doc README.txt AUTHORS.txt
 %doc examples
