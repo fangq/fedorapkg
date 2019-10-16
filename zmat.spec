@@ -6,7 +6,7 @@ License:        GPLv3+
 URL:            https://github.com/fangq/%{name}
 Source0:        https://github.com/fangq/%{name}/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:        https://github.com/lloyd/easylzma/archive/0.0.7/easylzma-0.0.7.tar.gz
-BuildRequires:  cmake gcc-c++
+BuildRequires:  cmake gcc-c++ zlib-devel
 
 %description
 ZMat is a portable C library to enable easy-to-use data compression
@@ -21,8 +21,8 @@ between speed and compression time.
 
 %package devel
 Summary:        Development files for zmat - an easy-to-use data compression library
-Provides:       %{name}-static = %{version}-%{release}
-Requires:       %{name} lz4-devel
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       lz4-devel
 
 %description devel
 The %{name}-devel package provides the headers files and tools you may need to
@@ -58,11 +58,11 @@ popd
 
 pushd src
 %make_build clean
-%make_build lib BINARY=lib%{name}.a
+%make_build lib BINARY=lib%{name}.a CPPOPT="%{optflags} -fPIC"
 cp ../lib%{name}.a ../lib/
 cp zmatlib.h ../include
 %make_build clean
-%make_build dll BINARY=lib%{name}.so
+%make_build dll BINARY=lib%{name}.so CPPOPT="%{optflags} -fPIC"
 mv ../lib%{name}.so ../lib/lib%{name}.so.%{version}
 popd
 
@@ -93,9 +93,6 @@ popd
 %{_libdir}/lib%{name}.so.1
 
 %files devel
-%license LICENSE.txt
-%doc README.rst
-%doc AUTHORS.txt
 %dir %{_includedir}/easylzma
 %{_includedir}/%{name}lib.h
 %{_includedir}/easylzma/common.h
@@ -104,9 +101,6 @@ popd
 %{_libdir}/lib%{name}.so
 
 %files static
-%license LICENSE.txt
-%doc README.rst
-%doc AUTHORS.txt
 %{_libdir}/lib%{name}.a
 
 
