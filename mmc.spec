@@ -30,7 +30,6 @@ parallel computing and GPU to maximize performance on modern processors.
 
 %package -n octave-%{octpkg}
 Summary:        A GPU mesh-based Monte Carlo photon simulator for MATLAB/Octave
-BuildRequires:  octave-devel gcc-c++ vim-common opencl-headers ocl-icd-devel
 Requires:       octave opencl-filesystem octave-iso2mesh
 Recommends:     %{octpkg}-demos
 
