@@ -12,8 +12,8 @@ BuildRequires:  octave-devel gcc-c++ vim-common opencl-headers ocl-icd-devel
 Requires:       octave opencl-filesystem octave-iso2mesh
 Requires(post): octave
 Requires(postun): octave
-Provides:       bundled(ssemath)
-Provides:       bundled(cjson)
+Provides:       bundled(ssemath) = 0.0
+Provides:       bundled(cjson) = 0.0
 
 %description
 Mesh-based Monte Carlo (MMC) is a 3D Monte Carlo (MC) simulation software
@@ -192,11 +192,12 @@ install -m 0755 -pt %{buildroot}%{_bindir} bin/%{name}
 %doc examples
 
 %files -n octave-%{octpkg}
+%{octpkglibdir}
 %license LICENSE.txt
 %doc README.txt AUTHORS.txt
 %dir %{octpkgdir}
 %{octpkgdir}/*.m
-%{octpkgdir}/*.mex
+%dir %{octpkglibdir}
 %doc %{octpkgdir}/doc-cache
 %{octpkgdir}/packinfo
 
