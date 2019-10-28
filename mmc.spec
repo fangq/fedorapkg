@@ -146,6 +146,7 @@ EOF
 
 %build
 %set_build_flags
+rm -rf src/SFMT
 %make_build -C src oct LFLAGS="-L`octave-config -p OCTLIBDIR` -lOpenCL" USERCCFLAGS="%{optflags} -DUSE_OS_TIMER -DUSE_OPENCL"
 rm %{octpkg}/*.txt
 mv %{octpkg}/example .
