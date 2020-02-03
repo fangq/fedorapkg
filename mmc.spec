@@ -146,6 +146,7 @@ EOF
 %build
 %set_build_flags
 rm -rf src/SFMT
+# Build octave bits
 %make_build -C src oct LFLAGS="-L`octave-config -p OCTLIBDIR` -lOpenCL" USERCCFLAGS="%{optflags} -DUSE_OS_TIMER -DUSE_OPENCL"
 rm %{octpkg}/*.txt
 mv %{octpkg}/example .
@@ -153,6 +154,7 @@ mv %{octpkg} inst
 mv src/Makefile .
 %octave_pkg_build
 
+# Build non octave bits
 mv Makefile src
 pushd src
 %make_build clean
@@ -170,6 +172,10 @@ popd
 
 install -m 0755 -pd %{buildroot}%{_bindir}
 install -m 0755 -pt %{buildroot}%{_bindir} bin/%{name}
+
+# Move mex to arch specific directory
+mkdir -p -m 0755 %{buildroot}/%{octpkglibdir}
+mv %{buildroot}/%{octpkgdir}/*.mex %{buildroot}/%{octpkglibdir}/ -v
 
 %post -n octave-%{octpkg}
 %octave_cmd pkg rebuild
@@ -191,13 +197,11 @@ install -m 0755 -pt %{buildroot}%{_bindir} bin/%{name}
 %doc examples
 
 %files -n octave-%{octpkg}
-%{octpkglibdir}
 %license LICENSE.txt
 %doc README.txt AUTHORS.txt
-%dir %{octpkgdir}
-%{octpkgdir}/*.m
-%dir %{octpkglibdir}
 %doc %{octpkgdir}/doc-cache
+%{octpkglibdir}
+%{octpkgdir}
 %{octpkgdir}/packinfo
 
 %files -n %{octpkg}-demos
