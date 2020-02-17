@@ -1,5 +1,4 @@
 %global octpkg mmclab
-%global branch  mmcl
 
 Name:           mmc
 Version:        1.7.9
@@ -160,7 +159,7 @@ pushd src
 %make_build clean
 %make_build USERCCFLAGS="%{optflags} -DUSE_OS_TIMER -DUSE_OPENCL"
 mkdir -p ../bin
-cp bin/%{branch} ../bin/%{name}
+cp bin/%{name} ../bin/%{name}
 popd
 
 %if 0%{?fedora} <=30
