@@ -173,8 +173,8 @@ install -m 0755 -pd %{buildroot}%{_bindir}
 install -m 0755 -pt %{buildroot}%{_bindir} bin/%{name}
 
 # Move mex to arch specific directory
-mkdir -p -m 0755 %{buildroot}/%{octpkglibdir}
-mv %{buildroot}/%{octpkgdir}/*.mex %{buildroot}/%{octpkglibdir}/ -v
+mkdir -p -m 0755 %{buildroot}/%{octpkglibdir}/%{octave_host}-%{octave_api}
+mv %{buildroot}/%{octpkgdir}/*.mex %{buildroot}/%{octpkglibdir}/%{octave_host}-%{octave_api} -v
 
 %post -n octave-%{octpkg}
 %octave_cmd pkg rebuild
