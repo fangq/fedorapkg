@@ -146,7 +146,12 @@ EOF
 %set_build_flags
 rm -rf src/SFMT
 # Build octave bits
-%make_build -C src oct LFLAGS="-L`octave-config -p OCTLIBDIR` -lOpenCL" USERCCFLAGS="%{optflags} -DUSE_OS_TIMER -DUSE_OPENCL"
+%ifarch %ix86 x86_64
+    %make_build -C src oct LFLAGS="-L`octave-config -p OCTLIBDIR` -lOpenCL" USERCCFLAGS="%{optflags} -DUSE_OS_TIMER -DUSE_OPENCL"
+%else
+    %make_build -C src octomp LFLAGS="-L`octave-config -p OCTLIBDIR` -lOpenCL" USERCCFLAGS="%{optflags} -DUSE_OS_TIMER -DUSE_OPENCL"
+%endif
+
 rm %{octpkg}/*.txt
 mv %{octpkg}/example .
 mv %{octpkg} inst
@@ -157,7 +162,13 @@ mv src/Makefile .
 mv Makefile src
 pushd src
 %make_build clean
-%make_build USERCCFLAGS="%{optflags} -DUSE_OS_TIMER -DUSE_OPENCL"
+
+%ifarch %ix86 x86_64
+  %make_build USERCCFLAGS="%{optflags} -DUSE_OS_TIMER -DUSE_OPENCL"
+%else
+  %make_build omp USERCCFLAGS="%{optflags} -DUSE_OS_TIMER -DUSE_OPENCL"
+%endif
+
 mkdir -p ../bin
 cp bin/%{name} ../bin/%{name}
 popd
