@@ -1,14 +1,13 @@
 %global octpkg zmat
 
 Name:           octave-%{octpkg}
-Version:        0.9
+Version:        0.9.8
 Release:        1%{?dist}
 Summary:        A portable data compression/decompression toolbox for MATLAB/Octave
 License:        GPLv3+ or BSD
 URL:            https://github.com/fangq/zmat
 Source0:        https://github.com/fangq/zmat/archive/v%{version}/%{octpkg}-%{version}.tar.gz
-Source1:        https://github.com/lloyd/easylzma/archive/0.0.7/easylzma-0.0.7.tar.gz
-BuildRequires:  octave-devel zlib cmake gcc-c++
+BuildRequires:  octave-devel zlib gcc-c++
 
 Requires:       octave zlib
 Requires(post): octave
@@ -24,9 +23,7 @@ slowest but has the highest compression ratio; zlib/gzip have the best
 balance between speed and compression time.
 
 %prep
-%autosetup -n %{octpkg}-%{version} -b 1
-rm -rf src/easylzma
-cp -r ../easylzma-0.0.7 src/easylzma
+%autosetup -n %{octpkg}-%{version}
 
 cp LICENSE.txt COPYING
 
@@ -60,11 +57,7 @@ mkdir -p inst/
 mv *.m inst/
 
 %build
-cd src/easylzma
-%cmake .
-%make_build
-mv easylzma-0.0.7 easylzma-0.0.8
-cd ../
+cd src
 make clean 
 make oct
 cd ../
@@ -101,5 +94,8 @@ rm -rf src
 %{octpkgdir}/packinfo
 
 %changelog
+* Mon May 25 2020 Qianqian Fang <fangqq@gmail.com> - 0.9.8-1
+- Update to new upstream release v0.9.8
+
 * Tue Oct 01 2019 Qianqian Fang <fangqq@gmail.com> - 0.9-1
 - Initial package
